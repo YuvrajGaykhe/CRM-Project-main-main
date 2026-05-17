@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--sigma-bg: #08090f;
+		--sigma-surface: #11131d;
+		--sigma-surface-raised: #181b27;
+		--sigma-border: rgba(255, 255, 255, 0.1);
+		--sigma-text: #f8fafc;
+		--sigma-muted: #94a3b8;
+		--sigma-red: #ef4444;
+		--sigma-amber: #f59e0b;
+	}
+
+	body {
+		font-family: "Space Grotesk", "Segoe UI", sans-serif;
+		background-color: var(--sigma-bg);
+		color: var(--sigma-text);
+	}
+
+	* {
+		letter-spacing: 0;
+	}
+}
+
+@layer utilities {
+	.animate-fade-in {
+		animation: fade-in 0.6s ease both;
+	}
+
+	.animate-rise {
+		animation: rise 0.7s ease both;
+	}
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes rise {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+}

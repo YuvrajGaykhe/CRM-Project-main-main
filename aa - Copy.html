@@ -1,0 +1,1165 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Sigma Audio | Premium Automotive Audio Engineering</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#000;
+    color:white;
+    overflow-x:hidden;
+}
+
+/* CUSTOM SCROLLBAR */
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#050505;
+}
+
+::-webkit-scrollbar-thumb{
+    background:linear-gradient(to bottom,#dc2626,#7f1d1d);
+    border-radius:20px;
+}
+
+/* BACKGROUND */
+
+.bg-grid{
+    position:fixed;
+    inset:0;
+    background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size:40px 40px;
+    z-index:-2;
+}
+
+.red-glow{
+    position:fixed;
+    width:700px;
+    height:700px;
+    background:radial-gradient(circle, rgba(220,38,38,0.15), transparent 70%);
+    filter:blur(80px);
+    top:-200px;
+    right:-200px;
+    z-index:-1;
+}
+
+/* NAVBAR */
+
+.navbar{
+    transition:0.4s;
+}
+
+.navbar.scrolled{
+    background:rgba(0,0,0,0.8);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+/* GLASS */
+
+.glass{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+}
+
+/* HERO */
+
+.hero{
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+    background:
+    linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.95)),
+    url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=1600');
+    background-size:cover;
+    background-position:center;
+}
+
+/* BUTTONS */
+
+.btn-red{
+    background:linear-gradient(to right,#dc2626,#991b1b);
+    transition:0.4s;
+    box-shadow:0 10px 40px rgba(220,38,38,0.3);
+}
+
+.btn-red:hover{
+    transform:translateY(-3px) scale(1.03);
+    box-shadow:0 20px 60px rgba(220,38,38,0.5);
+}
+
+.btn-dark{
+    border:1px solid rgba(255,255,255,0.12);
+    transition:0.4s;
+}
+
+.btn-dark:hover{
+    background:white;
+    color:black;
+}
+
+/* PRODUCT CARD */
+
+.product-card{
+    position:relative;
+    overflow:hidden;
+    transition:0.5s;
+}
+
+.product-card:hover{
+    transform:translateY(-14px);
+    border-color:rgba(255,0,0,0.5);
+    box-shadow:0 30px 70px rgba(255,0,0,0.25);
+}
+
+.product-card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, rgba(255,0,0,0.15), transparent 40%);
+    opacity:0;
+    transition:0.5s;
+}
+
+.product-card:hover::before{
+    opacity:1;
+}
+
+.product-image{
+    transition:0.6s;
+    filter:drop-shadow(0 20px 40px rgba(255,0,0,0.25));
+}
+
+.product-card:hover .product-image{
+    transform:scale(1.08) rotate(-2deg);
+}
+
+/* BADGE */
+
+.badge{
+    background:rgba(255,0,0,0.15);
+    border:1px solid rgba(255,0,0,0.3);
+    color:#f87171;
+}
+
+/* SECTION TITLE */
+
+.section-title{
+    font-size:clamp(2.5rem,5vw,4rem);
+    font-weight:900;
+    line-height:1;
+}
+
+/* REVEAL */
+
+.reveal{
+    opacity:0;
+    transform:translateY(80px);
+    transition:1s ease;
+}
+
+.reveal.active{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* STATS */
+
+.stat-number{
+    background:linear-gradient(to bottom,#fff,#999);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* FOOTER */
+
+.footer-link{
+    color:#999;
+    transition:0.3s;
+}
+
+.footer-link:hover{
+    color:white;
+}
+
+/* WHATSAPP */
+
+.whatsapp{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    z-index:999;
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#25D366;
+    color:white;
+    font-size:30px;
+    box-shadow:0 10px 40px rgba(37,211,102,0.5);
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+    0%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.08);
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* MOBILE MENU */
+
+.mobile-menu{
+    position:fixed;
+    inset:0;
+    background:black;
+    z-index:999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:30px;
+    transform:translateY(-100%);
+    transition:0.5s;
+}
+
+.mobile-menu.active{
+    transform:translateY(0);
+}
+
+.mobile-menu a{
+    font-size:2rem;
+    font-weight:700;
+}
+
+/* FEATURE ICON */
+
+.feature-icon{
+    width:80px;
+    height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+    background:rgba(255,0,0,0.08);
+    border:1px solid rgba(255,0,0,0.15);
+    font-size:2rem;
+}
+
+/* TABLE */
+
+table{
+    border-collapse:collapse;
+}
+
+td,th{
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg-grid"></div>
+<div class="red-glow"></div>
+
+<!-- MOBILE MENU -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+    <a href="#home" onclick="closeMenu()">Home</a>
+    <a href="#products" onclick="closeMenu()">Products</a>
+    <a href="#features" onclick="closeMenu()">Features</a>
+    <a href="#dealers" onclick="closeMenu()">Dealers</a>
+    <a href="#contact" onclick="closeMenu()">Contact</a>
+
+</div>
+
+<!-- NAVBAR -->
+
+<header id="navbar" class="navbar fixed top-0 left-0 w-full z-50">
+
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+
+        <div>
+            <h1 class="text-3xl font-black tracking-widest text-red-500">
+                SIGMA AUDIO
+            </h1>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-10 text-sm uppercase tracking-wider">
+
+            <a href="#home" class="hover:text-red-500 transition">Home</a>
+            <a href="#products" class="hover:text-red-500 transition">Products</a>
+            <a href="#features" class="hover:text-red-500 transition">Features</a>
+            <a href="#dealers" class="hover:text-red-500 transition">Dealers</a>
+            <a href="#contact" class="hover:text-red-500 transition">Contact</a>
+
+        </nav>
+
+        <button onclick="openMenu()" class="md:hidden text-3xl">
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+<!-- HERO -->
+
+<section id="home" class="hero flex items-center">
+
+    <div class="max-w-7xl mx-auto px-6 w-full">
+
+        <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+            <div class="reveal">
+
+                <div class="badge inline-flex px-5 py-2 rounded-full mb-8 text-sm font-semibold">
+                    PREMIUM CLASS-D ENGINEERING
+                </div>
+
+                <h1 class="text-6xl md:text-8xl font-black leading-none mb-8">
+
+                    ENGINEERED
+                    <span class="text-red-500">FOR</span>
+                    EXTREME SOUND
+
+                </h1>
+
+                <p class="text-gray-400 text-xl leading-relaxed max-w-2xl mb-10">
+
+                    Professional automotive audio amplifiers designed for
+                    tractors, trucks, MPVs and Indian road conditions.
+
+                </p>
+
+                <div class="flex flex-wrap gap-5">
+
+                    <a href="#products"
+                    class="btn-red px-8 py-4 rounded-full font-bold">
+                        Explore Products
+                    </a>
+
+                    <a href="#contact"
+                    class="btn-dark px-8 py-4 rounded-full font-bold">
+                        Dealer Inquiry
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="reveal relative">
+
+                <img
+                src="https://images.unsplash.com/photo-1558089687-f282ffcbc126?q=80&w=1200"
+                class="w-full max-w-2xl mx-auto rounded-3xl shadow-2xl border border-red-900/40">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- STATS -->
+
+<section class="py-24">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+            <div class="glass rounded-3xl p-10 text-center reveal">
+
+                <h2 class="stat-number text-5xl font-black mb-3">10K+</h2>
+                <p class="text-gray-400">Amplifiers Sold</p>
+
+            </div>
+
+            <div class="glass rounded-3xl p-10 text-center reveal">
+
+                <h2 class="stat-number text-5xl font-black mb-3">250+</h2>
+                <p class="text-gray-400">Dealers</p>
+
+            </div>
+
+            <div class="glass rounded-3xl p-10 text-center reveal">
+
+                <h2 class="stat-number text-5xl font-black mb-3">8+</h2>
+                <p class="text-gray-400">States</p>
+
+            </div>
+
+            <div class="glass rounded-3xl p-10 text-center reveal">
+
+                <h2 class="stat-number text-5xl font-black mb-3">24/7</h2>
+                <p class="text-gray-400">Support</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- PRODUCTS -->
+
+<section id="products" class="py-32">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-24 reveal">
+
+            <h2 class="section-title mb-8">
+                POWER SERIES
+            </h2>
+
+            <p class="text-gray-400 text-xl max-w-3xl mx-auto">
+                Built for unmatched clarity, bass performance and durability.
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-10">
+
+            <!-- CARD -->
+
+            <div class="product-card glass rounded-3xl p-8 reveal">
+
+                <div class="badge inline-flex px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    4 CHANNEL • 200W RMS
+                </div>
+
+                <img
+                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200"
+                class="product-image w-full h-72 object-cover rounded-2xl mb-8">
+
+                <h3 class="text-3xl font-black mb-4">
+                    BCD202
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed mb-8">
+
+                    Heavy-duty Class-D amplifier designed for tractors,
+                    trucks and rugged Indian environments.
+
+                </p>
+
+                <div class="flex flex-wrap gap-3 mb-8">
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        MOSFET Protection
+                    </div>
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        High Bass
+                    </div>
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        12V Optimized
+                    </div>
+
+                </div>
+
+                <div class="flex gap-4">
+
+                    <button class="btn-red flex-1 py-4 rounded-xl font-bold">
+                        View Details
+                    </button>
+
+                    <button class="btn-dark flex-1 py-4 rounded-xl font-bold">
+                        Specs
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- CARD -->
+
+            <div class="product-card glass rounded-3xl p-8 reveal">
+
+                <div class="badge inline-flex px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    2 CHANNEL • 100W RMS
+                </div>
+
+                <img
+                src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=1200"
+                class="product-image w-full h-72 object-cover rounded-2xl mb-8">
+
+                <h3 class="text-3xl font-black mb-4">
+                    BCD2401
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed mb-8">
+
+                    Crystal clear two-channel amplifier engineered for
+                    smooth vocals and powerful output.
+
+                </p>
+
+                <div class="flex flex-wrap gap-3 mb-8">
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        Low Heat
+                    </div>
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        Clean Audio
+                    </div>
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        Efficient
+                    </div>
+
+                </div>
+
+                <div class="flex gap-4">
+
+                    <button class="btn-red flex-1 py-4 rounded-xl font-bold">
+                        View Details
+                    </button>
+
+                    <button class="btn-dark flex-1 py-4 rounded-xl font-bold">
+                        Specs
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- CARD -->
+
+            <div class="product-card glass rounded-3xl p-8 reveal">
+
+                <div class="badge inline-flex px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    PREMIUM SERIES
+                </div>
+
+                <img
+                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1200"
+                class="product-image w-full h-72 object-cover rounded-2xl mb-8">
+
+                <h3 class="text-3xl font-black mb-4">
+                    BC202 PRO
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed mb-8">
+
+                    Advanced premium amplifier series with superior
+                    durability and enhanced sound tuning.
+
+                </p>
+
+                <div class="flex flex-wrap gap-3 mb-8">
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        Premium PCB
+                    </div>
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        Rugged Build
+                    </div>
+
+                    <div class="badge px-4 py-2 rounded-full text-xs">
+                        Long Life
+                    </div>
+
+                </div>
+
+                <div class="flex gap-4">
+
+                    <button class="btn-red flex-1 py-4 rounded-xl font-bold">
+                        View Details
+                    </button>
+
+                    <button class="btn-dark flex-1 py-4 rounded-xl font-bold">
+                        Specs
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section id="features" class="py-32 bg-black">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-24 reveal">
+
+            <h2 class="section-title mb-8">
+                WHY SIGMA AUDIO
+            </h2>
+
+            <p class="text-gray-400 text-xl max-w-3xl mx-auto">
+
+                Built in Maharashtra. Engineered for Indian conditions.
+                Designed for high vibration, heat and long-hour performance.
+
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="feature-icon mb-8">
+                    ⚡
+                </div>
+
+                <h3 class="text-2xl font-bold mb-4">
+                    High Power
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed">
+                    Massive RMS output with stable performance.
+                </p>
+
+            </div>
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="feature-icon mb-8">
+                    🛠️
+                </div>
+
+                <h3 class="text-2xl font-bold mb-4">
+                    Rugged Design
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed">
+                    Built for tractors, trucks and rough roads.
+                </p>
+
+            </div>
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="feature-icon mb-8">
+                    🔊
+                </div>
+
+                <h3 class="text-2xl font-bold mb-4">
+                    Pure Sound
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed">
+                    Powerful bass and crystal-clear output.
+                </p>
+
+            </div>
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="feature-icon mb-8">
+                    🇮🇳
+                </div>
+
+                <h3 class="text-2xl font-bold mb-4">
+                    Made for India
+                </h3>
+
+                <p class="text-gray-400 leading-relaxed">
+                    Optimized for Indian voltage and conditions.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- COMPARISON -->
+
+<section class="py-32">
+
+    <div class="max-w-6xl mx-auto px-6">
+
+        <div class="text-center mb-20 reveal">
+
+            <h2 class="section-title mb-8">
+                PRODUCT COMPARISON
+            </h2>
+
+        </div>
+
+        <div class="overflow-x-auto reveal">
+
+            <table class="w-full glass rounded-3xl overflow-hidden">
+
+                <thead>
+
+                    <tr class="bg-red-900/20">
+
+                        <th class="p-6 text-left">Model</th>
+                        <th class="p-6 text-left">Channels</th>
+                        <th class="p-6 text-left">Power</th>
+                        <th class="p-6 text-left">Application</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td class="p-6">BCD202</td>
+                        <td class="p-6">4 Channel</td>
+                        <td class="p-6">200W RMS</td>
+                        <td class="p-6">Tractor / Truck</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="p-6">BCD2401</td>
+                        <td class="p-6">2 Channel</td>
+                        <td class="p-6">100W RMS</td>
+                        <td class="p-6">Auto / MPV</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td class="p-6">BC202 PRO</td>
+                        <td class="p-6">Premium</td>
+                        <td class="p-6">High Performance</td>
+                        <td class="p-6">Professional Use</td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- TESTIMONIALS -->
+
+<section class="py-32 bg-black">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-24 reveal">
+
+            <h2 class="section-title mb-8">
+                TRUSTED BY DEALERS
+            </h2>
+
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="text-4xl mb-6">
+                    ⭐⭐⭐⭐⭐
+                </div>
+
+                <p class="text-gray-300 leading-relaxed mb-8">
+
+                    "Using Sigma Audio in tractors since 3 years.
+                    Excellent durability and bass quality."
+
+                </p>
+
+                <h4 class="font-bold">
+                    Dealer • Punjab
+                </h4>
+
+            </div>
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="text-4xl mb-6">
+                    ⭐⭐⭐⭐⭐
+                </div>
+
+                <p class="text-gray-300 leading-relaxed mb-8">
+
+                    "Customers love the power output and clean audio.
+                    One of the best Indian amplifier brands."
+
+                </p>
+
+                <h4 class="font-bold">
+                    Retailer • Maharashtra
+                </h4>
+
+            </div>
+
+            <div class="glass p-10 rounded-3xl reveal">
+
+                <div class="text-4xl mb-6">
+                    ⭐⭐⭐⭐⭐
+                </div>
+
+                <p class="text-gray-300 leading-relaxed mb-8">
+
+                    "Very low heating and rugged PCB quality.
+                    Perfect for long highway operations."
+
+                </p>
+
+                <h4 class="font-bold">
+                    Installer • Rajasthan
+                </h4>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- DEALERS -->
+
+<section id="dealers" class="py-32">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-24 reveal">
+
+            <h2 class="section-title mb-8">
+                DEALER NETWORK
+            </h2>
+
+            <p class="text-gray-400 text-xl">
+                Expanding across India
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="glass rounded-3xl p-10 reveal">
+
+                <h3 class="text-2xl font-bold mb-4">
+                    Maharashtra
+                </h3>
+
+                <p class="text-gray-400 mb-8">
+                    80+ active dealers and distributors.
+                </p>
+
+                <button class="btn-red w-full py-4 rounded-xl font-bold">
+                    Contact Dealer
+                </button>
+
+            </div>
+
+            <div class="glass rounded-3xl p-10 reveal">
+
+                <h3 class="text-2xl font-bold mb-4">
+                    Punjab
+                </h3>
+
+                <p class="text-gray-400 mb-8">
+                    Tractor and heavy vehicle network.
+                </p>
+
+                <button class="btn-red w-full py-4 rounded-xl font-bold">
+                    Contact Dealer
+                </button>
+
+            </div>
+
+            <div class="glass rounded-3xl p-10 reveal">
+
+                <h3 class="text-2xl font-bold mb-4">
+                    Rajasthan
+                </h3>
+
+                <p class="text-gray-400 mb-8">
+                    Commercial audio installation support.
+                </p>
+
+                <button class="btn-red w-full py-4 rounded-xl font-bold">
+                    Contact Dealer
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- CONTACT -->
+
+<section id="contact" class="py-32 bg-black">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+            <div class="reveal">
+
+                <h2 class="section-title mb-10">
+                    CONTACT US
+                </h2>
+
+                <p class="text-gray-400 text-xl leading-relaxed mb-10">
+
+                    Become a Sigma Audio dealer or get product
+                    information for your business.
+
+                </p>
+
+                <div class="space-y-6 text-lg">
+
+                    <p>📧 sigmaaudio@email.com</p>
+                    <p>📞 +91 90000 00000</p>
+                    <p>📍 Maharashtra, India</p>
+
+                </div>
+
+            </div>
+
+            <form class="glass rounded-3xl p-10 reveal space-y-6">
+
+                <input
+                type="text"
+                placeholder="Your Name"
+                class="w-full p-5 bg-black border border-gray-800 rounded-2xl outline-none focus:border-red-500">
+
+                <input
+                type="email"
+                placeholder="Email Address"
+                class="w-full p-5 bg-black border border-gray-800 rounded-2xl outline-none focus:border-red-500">
+
+                <textarea
+                rows="6"
+                placeholder="Your Message"
+                class="w-full p-5 bg-black border border-gray-800 rounded-2xl outline-none focus:border-red-500"></textarea>
+
+                <button class="btn-red w-full py-5 rounded-2xl font-bold text-lg">
+                    Send Inquiry
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer class="border-t border-red-900/20 py-20">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="grid md:grid-cols-4 gap-10 mb-16">
+
+            <div>
+
+                <h2 class="text-3xl font-black text-red-500 mb-6">
+                    SIGMA AUDIO
+                </h2>
+
+                <p class="text-gray-500 leading-relaxed">
+
+                    Premium automotive audio amplifiers engineered
+                    for Indian conditions.
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold text-xl mb-6">
+                    Navigation
+                </h3>
+
+                <div class="space-y-4">
+
+                    <a href="#" class="footer-link block">Home</a>
+                    <a href="#" class="footer-link block">Products</a>
+                    <a href="#" class="footer-link block">Dealers</a>
+                    <a href="#" class="footer-link block">Contact</a>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold text-xl mb-6">
+                    Products
+                </h3>
+
+                <div class="space-y-4">
+
+                    <a href="#" class="footer-link block">BCD202</a>
+                    <a href="#" class="footer-link block">BCD2401</a>
+                    <a href="#" class="footer-link block">BC202 PRO</a>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold text-xl mb-6">
+                    Social
+                </h3>
+
+                <div class="space-y-4">
+
+                    <a href="#" class="footer-link block">Instagram</a>
+                    <a href="#" class="footer-link block">YouTube</a>
+                    <a href="#" class="footer-link block">Facebook</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="border-t border-white/5 pt-10 text-center text-gray-600">
+
+            © 2026 Sigma Audio. All rights reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- WHATSAPP -->
+
+<a href="https://wa.me/919000000000" class="whatsapp">
+
+    ✆
+
+</a>
+
+<!-- JS -->
+
+<script>
+
+/* NAVBAR */
+
+window.addEventListener("scroll",()=>{
+
+    const navbar=document.getElementById("navbar");
+
+    navbar.classList.toggle("scrolled",window.scrollY>50);
+
+});
+
+/* REVEAL */
+
+const reveals=document.querySelectorAll(".reveal");
+
+const observer=new IntersectionObserver(entries=>{
+
+    entries.forEach(entry=>{
+
+        if(entry.isIntersecting){
+
+            entry.target.classList.add("active");
+
+        }
+
+    });
+
+},{threshold:0.1});
+
+reveals.forEach(r=>observer.observe(r));
+
+/* MOBILE MENU */
+
+const mobileMenu=document.getElementById("mobileMenu");
+
+function openMenu(){
+
+    mobileMenu.classList.add("active");
+
+}
+
+function closeMenu(){
+
+    mobileMenu.classList.remove("active");
+
+}
+
+/* PARALLAX */
+
+document.addEventListener("mousemove",(e)=>{
+
+    const glow=document.querySelector(".red-glow");
+
+    glow.style.transform=`
+    translate(
+    ${e.clientX/30}px,
+    ${e.clientY/30}px
+    )`;
+
+});
+
+</script>
+
+</body>
+</html>
+```
