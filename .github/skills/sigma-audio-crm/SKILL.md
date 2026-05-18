@@ -9,6 +9,12 @@ Enterprise-grade CRM for Sigma Audio's automotive audio distribution
 network. Django REST backend + React/Vite frontend. Every task follows
 a strict read → plan → implement → verify → report cycle.
 
+Shell command rules
+- Always use `python3` for Django/venv commands; never use bare `python`.
+- Keep `.env` local only and never commit it.
+- Verify `.env` is not in history with:
+  `git log --all --full-history -- "backend/.env"`.
+
 Codebase Map
 backend/
   backend/         settings.py · urls.py · wsgi.py · asgi.py
@@ -122,9 +128,9 @@ After each file edit, state: what changed · why · what it affects.
 Step 4 — Verify
 Run these checks in exact order. All must pass before reporting done:
 bash# Backend
-python manage.py check                    # must be 0 issues
-python manage.py makemigrations --check   # must be clean
-python manage.py test                     # must pass all
+python3 manage.py check                    # must be 0 issues
+python3 manage.py makemigrations --check   # must be clean
+python3 manage.py test                     # must pass all
 
 # Frontend
 cd frontend && npm run lint               # must be 0 errors
@@ -221,7 +227,7 @@ def perform_create(self, serializer):
 
 # 7. New apps go in settings.INSTALLED_APPS
 # 8. New model changes get a migration
-#    python manage.py makemigrations <app_name>
+#    python3 manage.py makemigrations <app_name>
 Frontend
 typescript// 1. All API calls through the axios instance
 import apiClient from '@/services/api/client'
