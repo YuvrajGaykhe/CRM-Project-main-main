@@ -21,7 +21,7 @@ class Attachment(TimestampedModel):
     content_object = GenericForeignKey("content_type", "object_id")
     file_type = models.CharField(max_length=40, choices=FILE_TYPE_CHOICES, default="other")
     file_name = models.CharField(max_length=180)
-    file_url = models.URLField()
+    file = models.FileField(upload_to="attachments/%Y/%m/", blank=True)
     mime_type = models.CharField(max_length=120, blank=True)
     size_bytes = models.PositiveIntegerField(default=0)
     uploaded_by = models.ForeignKey(
@@ -41,3 +41,10 @@ class Attachment(TimestampedModel):
 
     def __str__(self):
         return self.file_name
+
+    @property
+    def file_url(self):
+        # DEPRECATED: retained for backward-compatible serializer output.
+        if not self.file:
+            return ""
+        return self.file.url

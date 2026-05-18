@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
 
 const HeroPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext);
+
   useEffect(() => {
-    const session = localStorage.getItem("authTokens");
-    if (session) {
+    if (isAuthenticated) {
       navigate("/dashboard");
     }
-  }, [navigate]);
+  }, [isAuthenticated, navigate]);
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center gap-5">
       <p className="text-bold text-5xl text-yellow-400">

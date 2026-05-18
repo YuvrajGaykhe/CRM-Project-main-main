@@ -4,10 +4,10 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 
 const ProtectedRoute = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const location = useLocation();
 
-  if (!authTokens?.access) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 

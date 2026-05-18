@@ -33,11 +33,45 @@ router.register("tasks", TaskViewSet, basename="task")
 router.register("followups", FollowUpViewSet, basename="followup")
 router.register("notifications", NotificationViewSet, basename="notification")
 router.register("attachments", AttachmentViewSet, basename="attachment")
+router.register("files", AttachmentViewSet, basename="file")
 router.register("audit-logs", AuditLogViewSet, basename="audit-log")
 router.register("inquiry-events", InquiryEventViewSet, basename="inquiry-event")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path(
+        "accounts/users/",
+        UserViewSet.as_view({"get": "list"}),
+        name="accounts-user-list",
+    ),
+    path(
+        "accounts/users/<int:pk>/",
+        UserViewSet.as_view({"get": "retrieve"}),
+        name="accounts-user-detail",
+    ),
+    path(
+        "accounts/roles/",
+        RoleViewSet.as_view({"get": "list", "post": "create"}),
+        name="accounts-role-list",
+    ),
+    path(
+        "accounts/roles/<int:pk>/",
+        RoleViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="accounts-role-detail",
+    ),
+    path("audit/", AuditLogViewSet.as_view({"get": "list"}), name="audit-log-list-alias"),
+    path(
+        "audit/<int:pk>/",
+        AuditLogViewSet.as_view({"get": "retrieve"}),
+        name="audit-log-detail-alias",
+    ),
     # Analytics endpoints
     path("analytics/overview/", AnalyticsOverviewAPIView.as_view(), name="analytics-overview"),
     path("analytics/leads/", AnalyticsLeadsAPIView.as_view(), name="analytics-leads"),

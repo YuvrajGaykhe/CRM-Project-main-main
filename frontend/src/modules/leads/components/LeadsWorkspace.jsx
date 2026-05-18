@@ -16,6 +16,7 @@ import {
   createLeadFollowup,
   createNote,
   fetchAssignmentData,
+  fetchLeadAttachments,
   fetchFollowups,
   fetchLeadById,
   fetchLeadNotes,
@@ -23,6 +24,7 @@ import {
   fetchLeadTimeline,
   moveLeadStatus,
   patchLead,
+  uploadLeadAttachment,
 } from "../services/leadsApi";
 
 const sources = [
@@ -94,6 +96,11 @@ const LeadsWorkspace = ({ mode }) => {
   const notesQuery = useQuery({
     queryKey: ["lead-notes", selectedLeadId],
     queryFn: () => fetchLeadNotes(selectedLeadId),
+    enabled: Boolean(selectedLeadId),
+  });
+  const attachmentsQuery = useQuery({
+    queryKey: ["lead-attachments", selectedLeadId],
+    queryFn: () => fetchLeadAttachments(selectedLeadId),
     enabled: Boolean(selectedLeadId),
   });
   const followupsQuery = useQuery({
@@ -171,10 +178,20 @@ const LeadsWorkspace = ({ mode }) => {
     },
     onSuccess: () => {
       setNoteDraft("");
-      setAttachment(null);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["lead-notes", selectedLeadId] });
+      queryClient.invalidateQueries({ queryKey: ["lead-timeline", selectedLeadId] });
+    },
+  });
+
+  const attachmentMutation = useMutation({
+    mutationFn: ({ leadId, file }) => uploadLeadAttachment(leadId, file),
+    onSuccess: () => {
+      setAttachment(null);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["lead-attachments", selectedLeadId] });
       queryClient.invalidateQueries({ queryKey: ["lead-timeline", selectedLeadId] });
     },
   });
@@ -234,6 +251,30 @@ const LeadsWorkspace = ({ mode }) => {
     const next = new URLSearchParams(searchParams);
     next.delete("leadId");
     setSearchParams(next, { replace: true });
+  };
+
+  const handleAddNote = async () => {
+    if (!selectedLead) return;
+
+    const jobs = [];
+    if (noteDraft.trim()) {
+      jobs.push(
+        noteMutation.mutateAsync({
+          leadId: selectedLead.id,
+          note: noteDraft,
+        })
+      );
+    }
+    if (attachment) {
+      jobs.push(
+        attachmentMutation.mutateAsync({
+          leadId: selectedLead.id,
+          file: attachment,
+        })
+      );
+    }
+    if (!jobs.length) return;
+    await Promise.all(jobs);
   };
 
   return (
@@ -339,12 +380,14 @@ const LeadsWorkspace = ({ mode }) => {
           moveMutation.isPending ||
           patchLeadMutation.isPending ||
           followupMutation.isPending ||
-          noteMutation.isPending
+          noteMutation.isPending ||
+          attachmentMutation.isPending
         }
         users={assignmentQuery.data?.users || []}
         dealers={assignmentQuery.data?.dealers || []}
         timeline={timelineQuery.data || []}
         notes={notesQuery.data || []}
+        attachments={attachmentsQuery.data || []}
         followups={followupsQuery.data || []}
         noteDraft={noteDraft}
         setNoteDraft={setNoteDraft}
@@ -357,6 +400,7 @@ const LeadsWorkspace = ({ mode }) => {
           leadDetailQuery.refetch();
           timelineQuery.refetch();
           notesQuery.refetch();
+          attachmentsQuery.refetch();
           followupsQuery.refetch();
         }}
         onMoveStatus={(status) => selectedLead && moveMutation.mutate({ lead: selectedLead, status })}
@@ -381,13 +425,7 @@ const LeadsWorkspace = ({ mode }) => {
             dealerId,
           })
         }
-        onAddNote={() =>
-          selectedLead &&
-          noteMutation.mutate({
-            leadId: selectedLead.id,
-            note: noteDraft,
-          })
-        }
+        onAddNote={handleAddNote}
         onCreateFollowup={() =>
           selectedLead &&
           followupMutation.mutate({

@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 
 const Navbar = () => {
-  const { logoutUser } = useContext(AuthContext);
-
-  const token = localStorage.getItem("authTokens");
+  const { logoutUser, isAuthenticated } = useContext(AuthContext);
 
   return (
     <nav className="w-full py-3">
@@ -16,7 +14,7 @@ const Navbar = () => {
         </Link>
         <div className="" id="navbarSupportedContent">
           <ul className="w-full flex justify-center items-center gap-4">
-            {token ? (
+            {isAuthenticated ? (
               <>
                 <li className="">
                   <Link className="hover:text-orange-400" to="/dashboard/add-record">

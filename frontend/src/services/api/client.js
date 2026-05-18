@@ -2,20 +2,10 @@ import axios from "axios";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
-});
-
-apiClient.interceptors.request.use((config) => {
-  const storedTokens = localStorage.getItem("authTokens");
-  if (storedTokens) {
-    const tokens = JSON.parse(storedTokens);
-    if (tokens?.access) {
-      config.headers.Authorization = `Bearer ${tokens.access}`;
-    }
-  }
-  return config;
 });
 
 apiClient.interceptors.response.use(
@@ -23,29 +13,18 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest?._retry &&
+      !originalRequest?.url?.includes("/token/refresh/")
+    ) {
       originalRequest._retry = true;
-      const storedTokens = localStorage.getItem("authTokens");
 
-      if (storedTokens) {
-        const tokens = JSON.parse(storedTokens);
-        if (tokens?.refresh) {
-          try {
-            const refreshResponse = await axios.post(
-              `${apiClient.defaults.baseURL}/token/refresh/`,
-              { refresh: tokens.refresh }
-            );
-            const nextTokens = {
-              ...tokens,
-              ...refreshResponse.data,
-            };
-            localStorage.setItem("authTokens", JSON.stringify(nextTokens));
-            originalRequest.headers.Authorization = `Bearer ${nextTokens.access}`;
-            return apiClient(originalRequest);
-          } catch (refreshError) {
-            localStorage.removeItem("authTokens");
-          }
-        }
+      try {
+        await apiClient.post("/token/refresh/", {});
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
       }
     }
 

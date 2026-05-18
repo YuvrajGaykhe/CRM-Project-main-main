@@ -143,9 +143,13 @@ class LeadViewSet(viewsets.ModelViewSet):
         }
         return response.Response(data)
 
-    @decorators.action(methods=["post"], detail=True)
+    @decorators.action(methods=["get", "post"], detail=True)
     def notes(self, request, pk=None):
         lead = self.get_object()
+        if request.method == "GET":
+            notes = lead.lead_notes.select_related("created_by").all()
+            return response.Response(LeadNoteSerializer(notes, many=True).data)
+
         serializer = LeadNoteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         note = serializer.save(lead=lead, created_by=request.user)
@@ -158,6 +162,32 @@ class LeadViewSet(viewsets.ModelViewSet):
         )
         log_action(request.user, "lead.note_added", note, request=request)
         return response.Response(LeadNoteSerializer(note).data, status=status.HTTP_201_CREATED)
+
+    @decorators.action(methods=["post"], detail=True)
+    def move(self, request, pk=None):
+        lead = self.get_object()
+        next_status = (request.data.get("status") or "").strip()
+        allowed_statuses = {choice for choice, _ in Lead.STATUS_CHOICES}
+        if next_status not in allowed_statuses:
+            return response.Response(
+                {"status": f"Invalid status: '{next_status}'"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        old_status = lead.status
+        if old_status != next_status:
+            lead.status = next_status
+            lead.updated_by = request.user
+            lead.save(update_fields=["status", "updated_by", "updated_at"])
+            create_timeline_event(
+                lead,
+                "lead.status_changed",
+                f"Status changed from {old_status} to {next_status}.",
+                metadata={"from": old_status, "to": next_status},
+                user=request.user,
+            )
+            log_action(request.user, "lead.status_changed", lead, request=request)
+        return response.Response(self.get_serializer(lead).data)
 
     @decorators.action(methods=["get"], detail=True)
     def timeline(self, request, pk=None):

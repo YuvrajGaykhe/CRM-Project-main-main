@@ -81,10 +81,20 @@ CORS_ALLOWED_ORIGINS = [
     for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
     if origin.strip()
 ]
+CORS_ALLOW_CREDENTIALS = True
+
+AUTH_COOKIE = "access_token"
+AUTH_COOKIE_REFRESH = "refresh_token"
+AUTH_COOKIE_SECURE = not DEBUG
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_SAMESITE = "Lax"
+AUTH_COOKIE_PATH = "/"
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
+AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24 * 7
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "shared.authentication.cookie_jwt.CookieJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
@@ -202,7 +212,7 @@ if IS_PRODUCTION:
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type

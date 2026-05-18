@@ -1,73 +1,56 @@
-import { createContext, useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
 
-const AuthContext = createContext();
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+import apiClient from "../services/api/client";
 
-const decodeAccessToken = (tokens) => {
-  if (!tokens?.access) return null;
-  return jwtDecode(tokens.access);
-};
+const AuthContext = createContext();
 
 export default AuthContext;
 
 export const AuthProvider = ({ children }) => {
-  const [authTokens, setAuthTokens] = useState(() =>
-    localStorage.getItem("authTokens")
-      ? JSON.parse(localStorage.getItem("authTokens"))
-      : null
-  );
-
-  const [user, setUser] = useState(
-    localStorage.getItem("authTokens")
-      ? decodeAccessToken(JSON.parse(localStorage.getItem("authTokens")))
-      : null
-  );
-
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
 
-  const loginUser = async (email, password) => {
-    let url = `${API_BASE_URL}/token/`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
+  const fetchCurrentUser = useCallback(async () => {
+    const response = await apiClient.get("/auth/me/");
+    setUser(response.data);
+    setIsAuthenticated(true);
+    return response.data;
+  }, []);
 
-    if (response.status === 200) {
-      setAuthTokens(data);
-      setUser(decodeAccessToken(data));
-      localStorage.setItem("authTokens", JSON.stringify(data));
-      navigate("/dashboard");
-      swal.fire({
-        title: "Login Success",
-        icon: "success",
-        toast: true,
-        timer: 6000,
-        position: "top-right",
-        timerProgressBar: true,
-        showConfirmButton: false,
-      });
-    } else {
-      console.log(response.status);
-      console.log("An Error Occured");
-      swal.fire({
-        title: "Email - Password does not exist",
-        icon: "error",
-        toast: true,
-        timer: 6000,
-        position: "top-right",
-        timerProgressBar: true,
-        showConfirmButton: false,
-      });
+  const loginUser = async (email, password) => {
+    try {
+      const response = await apiClient.post("/token/", { email, password });
+      if (response.status === 200) {
+        await fetchCurrentUser();
+        navigate("/dashboard");
+        swal.fire({
+          title: "Login Success",
+          icon: "success",
+          toast: true,
+          timer: 6000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+        return;
+      }
+    } catch (error) {
+      // Handled by error toast below.
     }
+
+    swal.fire({
+      title: "Email - Password does not exist",
+      icon: "error",
+      toast: true,
+      timer: 6000,
+      position: "top-right",
+      timerProgressBar: true,
+      showConfirmButton: false,
+    });
   };
 
   const registerUser = async (
@@ -77,51 +60,34 @@ export const AuthProvider = ({ children }) => {
     password,
     password2
   ) => {
-    let url = `${API_BASE_URL}/register/`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ full_name, email, username, password, password2 }),
-    });
-    const data = await response.json();
-
-    if (response.status == 201) {
-      navigate("/login");
-      swal.fire({
-        title: "Registration Success",
-        icon: "success",
-        toast: true,
-        timer: 6000,
-        position: "top-right",
-        timerProgressBar: true,
-        showConfirmButton: false,
+    try {
+      const response = await apiClient.post("/register/", {
+        full_name,
+        email,
+        username,
+        password,
+        password2,
       });
-    } else {
-      console.log(response.status);
-      console.log("An Error Occured");
-      console.log(data);
-      swal.fire({
-        title: "There was a server error",
-        icon: "error",
-        toast: true,
-        timer: 6000,
-        position: "top-right",
-        timerProgressBar: true,
-        showConfirmButton: false,
-      });
+      if (response.status === 201) {
+        navigate("/login");
+        swal.fire({
+          title: "Registration Success",
+          icon: "success",
+          toast: true,
+          timer: 6000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+        return;
+      }
+    } catch (error) {
+      // Handled by error toast below.
     }
-  };
 
-  const logoutUser = () => {
-    setAuthTokens(null);
-    setUser(null);
-    localStorage.removeItem("authTokens");
-    navigate("/login");
     swal.fire({
-      title: "You have been logged out",
-      icon: "success",
+      title: "There was a server error",
+      icon: "error",
       toast: true,
       timer: 6000,
       position: "top-right",
@@ -130,22 +96,51 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const contextData = {
-    user,
-    setUser,
-    authTokens,
-    setAuthTokens,
-    registerUser,
-    loginUser,
-    logoutUser,
+  const logoutUser = async () => {
+    try {
+      await apiClient.post("/token/logout/", {});
+    } catch (error) {
+      // Always clear local auth state, even if logout endpoint fails.
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      navigate("/login");
+      swal.fire({
+        title: "You have been logged out",
+        icon: "success",
+        toast: true,
+        timer: 6000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    }
   };
 
   useEffect(() => {
-    if (authTokens) {
-      setUser(decodeAccessToken(authTokens));
-    }
-    setLoading(false);
-  }, [authTokens, loading]);
+    const bootstrapAuth = async () => {
+      try {
+        await fetchCurrentUser();
+      } catch (error) {
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    bootstrapAuth();
+  }, [fetchCurrentUser]);
+
+  const contextData = {
+    user,
+    setUser,
+    isAuthenticated,
+    authTokens: isAuthenticated ? { access: true } : null,
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshUser: fetchCurrentUser,
+  };
 
   return (
     <AuthContext.Provider value={contextData}>

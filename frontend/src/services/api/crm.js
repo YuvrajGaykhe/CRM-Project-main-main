@@ -64,6 +64,26 @@ export const addLeadNote = async (id, payload) =>
 export const getLeadNotes = async (id) =>
   unwrap(await apiClient.get(`/v1/leads/${id}/notes/`));
 
+export const uploadAttachment = async (contentType, objectId, fileType, file) => {
+  const form = new FormData();
+  form.append("content_type", contentType);
+  form.append("object_id", objectId);
+  form.append("file_type", fileType);
+  form.append("file", file);
+  return unwrap(
+    await apiClient.post("/v1/files/", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  );
+};
+
+export const getAttachments = async (contentType, objectId) =>
+  unwrap(
+    await apiClient.get("/v1/files/", {
+      params: { content_type: contentType, object_id: objectId },
+    })
+  );
+
 export const exportLeadsCSV = async (params = {}) => {
   const response = await apiClient.get("/v1/leads/export_csv/", {
     params,

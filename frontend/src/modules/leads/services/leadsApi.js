@@ -6,11 +6,13 @@ import {
   getDealers,
   getEnterpriseUsers,
   getFollowups,
+  getAttachments,
   getLeadById,
   getLeadNotes,
   getLeadTimeline,
   getLeads,
   moveLead,
+  uploadAttachment,
   updateLead,
 } from "../../../services/api/crm";
 
@@ -36,5 +38,9 @@ export const moveLeadStatus = (leadId, status) => moveLead(leadId, status);
 export const patchLead = (leadId, payload) => updateLead(leadId, payload);
 export const assignDealer = (leadId, dealerId) => assignLeadDealer(leadId, dealerId);
 export const createNote = (leadId, note) => addLeadNote(leadId, { note });
+export const fetchLeadAttachments = (leadId) =>
+  getAttachments("leads.lead", leadId);
+export const uploadLeadAttachment = (leadId, file) =>
+  uploadAttachment("leads.lead", leadId, "lead_attachment", file);
 export const createLeadFollowup = (payload) => createFollowup(payload);
 export const completeLeadFollowup = (followupId, outcome) => completeFollowup(followupId, outcome);

@@ -42,6 +42,7 @@ const LeadDetailDrawer = ({
   dealers,
   timeline,
   notes,
+  attachments,
   followups,
   loading,
   saving,
@@ -63,6 +64,10 @@ const LeadDetailDrawer = ({
 }) => {
   const followupItems = useMemo(() => followups?.results || followups || [], [followups]);
   const noteItems = useMemo(() => notes?.results || notes || [], [notes]);
+  const attachmentItems = useMemo(
+    () => attachments?.results || attachments || [],
+    [attachments]
+  );
 
   return (
     <AnimatePresence>
@@ -246,7 +251,7 @@ const LeadDetailDrawer = ({
                       />
                       {attachment ? attachment.name : "Attach file"}
                     </label>
-                    <ActionButton onClick={onAddNote} disabled={!noteDraft.trim() || saving}>
+                    <ActionButton onClick={onAddNote} disabled={(!noteDraft.trim() && !attachment) || saving}>
                       <FiSave /> Save note
                     </ActionButton>
                   </div>
@@ -263,6 +268,26 @@ const LeadDetailDrawer = ({
                       <p className="text-xs text-slate-500">
                         No notes yet. Added notes appear instantly here.
                       </p>
+                    )}
+                  </div>
+                  <div className="mt-4 space-y-2 border-t border-white/10 pt-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Attachments
+                    </p>
+                    {attachmentItems.length ? (
+                      attachmentItems.map((item) => (
+                        <a
+                          key={item.id}
+                          href={item.file_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-200 hover:bg-white/10"
+                        >
+                          {item.file_name || "Attachment"}
+                        </a>
+                      ))
+                    ) : (
+                      <p className="text-xs text-slate-500">No attachments uploaded yet.</p>
                     )}
                   </div>
                 </Card>

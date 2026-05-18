@@ -6,7 +6,23 @@ from rest_framework.views import APIView
 from apps.api.serializers import UserSerializer
 from .models import Role
 from .serializers import RoleSerializer
+from shared.permissions.rbac import (
+    ROLE_ADMIN,
+    ROLE_DEALER_MANAGER,
+    ROLE_SALES_MANAGER,
+    ROLE_SUPER_ADMIN,
+    SigmaRolePermission,
+)
 from shared.permissions.roles import AdminRoleRequired
+
+
+class ManagementReadPermission(SigmaRolePermission):
+    read_roles = {
+        ROLE_SUPER_ADMIN,
+        ROLE_ADMIN,
+        ROLE_SALES_MANAGER,
+        ROLE_DEALER_MANAGER,
+    }
 
 
 class RoleListCreateAPIView(generics.ListCreateAPIView):
@@ -29,9 +45,9 @@ class MeAPIView(APIView):
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = get_user_model().objects.select_related("role").all()
+    queryset = get_user_model().objects.select_related("role").order_by("id")
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ManagementReadPermission]
 
 
 class RoleViewSet(viewsets.ModelViewSet):

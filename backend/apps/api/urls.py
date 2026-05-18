@@ -1,7 +1,11 @@
 from django.urls import path
 from rest_framework.throttling import AnonRateThrottle
-from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
+from shared.authentication.views import (
+    CookieTokenLogoutView,
+    CookieTokenObtainPairView,
+    CookieTokenRefreshView,
+)
 
 
 class LoginRateThrottle(AnonRateThrottle):
@@ -11,10 +15,11 @@ class LoginRateThrottle(AnonRateThrottle):
 urlpatterns = [
     path(
         "token/",
-        views.MyTokenObtainPairView.as_view(throttle_classes=[LoginRateThrottle]),
+        CookieTokenObtainPairView.as_view(throttle_classes=[LoginRateThrottle]),
         name="token-obtain",
     ),
-    path("token/refresh/", TokenRefreshView.as_view(), name="refresh-token"),
+    path("token/refresh/", CookieTokenRefreshView.as_view(), name="refresh-token"),
+    path("token/logout/", CookieTokenLogoutView.as_view(), name="token-logout"),
     path("register/", views.RegisterView.as_view(), name="register-user"),
     path("test/", views.protectedView, name="test"),
     path("", views.view_all_routes, name="all-routes"),
