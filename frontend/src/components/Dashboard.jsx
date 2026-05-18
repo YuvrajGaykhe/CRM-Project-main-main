@@ -37,6 +37,7 @@ const Dashboard = () => {
   const { data = fallback, isLoading } = useQuery({
     queryKey: ["enterprise-analytics"],
     queryFn: getEnterpriseAnalytics,
+    staleTime: 300_000,
   });
 
   const funnelData = Object.entries(data.lead_funnel || {}).map(([status, count]) => ({

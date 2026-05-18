@@ -30,6 +30,7 @@ const ProductsPage = () => {
   const productsQuery = useQuery({
     queryKey: ["products", "phase-two"],
     queryFn: () => getProducts({ page_size: 100 }),
+    staleTime: 30_000,
   });
 
   const products = productsQuery.data?.results || productsQuery.data || [];

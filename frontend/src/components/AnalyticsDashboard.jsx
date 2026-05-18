@@ -66,11 +66,11 @@ const AnalyticsDashboard = () => {
   const [range, setRange] = useState("30d");
   const params = { range };
 
-  const leadQ = useQuery({ queryKey: ["analytics-leads", params], queryFn: () => getLeadAnalytics(params) });
-  const dealerQ = useQuery({ queryKey: ["analytics-dealers", params], queryFn: () => getDealerAnalytics(params) });
-  const productQ = useQuery({ queryKey: ["analytics-products", params], queryFn: () => getProductAnalytics(params) });
-  const employeeQ = useQuery({ queryKey: ["analytics-employees", params], queryFn: () => getEmployeeAnalytics(params) });
-  const activityQ = useQuery({ queryKey: ["analytics-activity"], queryFn: () => getActivityFeed({ limit: 30 }) });
+  const leadQ = useQuery({ queryKey: ["analytics-leads", params], queryFn: () => getLeadAnalytics(params), staleTime: 300_000 });
+  const dealerQ = useQuery({ queryKey: ["analytics-dealers", params], queryFn: () => getDealerAnalytics(params), staleTime: 300_000 });
+  const productQ = useQuery({ queryKey: ["analytics-products", params], queryFn: () => getProductAnalytics(params), staleTime: 300_000 });
+  const employeeQ = useQuery({ queryKey: ["analytics-employees", params], queryFn: () => getEmployeeAnalytics(params), staleTime: 300_000 });
+  const activityQ = useQuery({ queryKey: ["analytics-activity"], queryFn: () => getActivityFeed({ limit: 30 }), staleTime: 300_000 });
 
   const funnel = leadQ.data?.funnel?.funnel || [];
   const funnelKpis = leadQ.data?.funnel || {};
