@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.db.models import Count, DecimalField, Q, Sum, Value
+from django.db.models.functions import Coalesce
 from rest_framework import decorators, filters, response, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -7,6 +9,15 @@ from shared.permissions.rbac import DealerPermission, get_role_slug, is_platform
 
 from .models import Dealer
 from .serializers import DealerSerializer
+
+ACTIVE_LEAD_STATUSES = (
+    "new",
+    "attempted_contact",
+    "contacted",
+    "interested",
+    "negotiation",
+    "dealer_assigned",
+)
 
 
 class DealerViewSet(viewsets.ModelViewSet):
@@ -23,11 +34,27 @@ class DealerViewSet(viewsets.ModelViewSet):
         "contact_person",
         "mobile",
     ]
-    ordering_fields = ["name", "state", "city", "tier", "status", "revenue_generated", "created_at"]
+    ordering_fields = ["name", "state", "city", "tier", "status", "created_at"]
     ordering = ["name"]
 
     def get_queryset(self):
-        queryset = Dealer.objects.select_related("territory_manager", "approved_by")
+        queryset = Dealer.objects.select_related(
+            "territory_manager",
+            "approved_by",
+        ).annotate(
+            annotated_active_leads_count=Count(
+                "assigned_leads",
+                filter=Q(assigned_leads__status__in=ACTIVE_LEAD_STATUSES),
+            ),
+            annotated_revenue_generated=Coalesce(
+                Sum(
+                    "assigned_leads__conversion_probability",
+                    filter=Q(assigned_leads__status="converted"),
+                ),
+                Value(0),
+                output_field=DecimalField(max_digits=14, decimal_places=2),
+            ),
+        )
         region = self.request.query_params.get("region")
         state = self.request.query_params.get("state")
         status_filter = self.request.query_params.get("status")

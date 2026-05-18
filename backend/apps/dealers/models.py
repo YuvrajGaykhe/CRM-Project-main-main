@@ -51,7 +51,9 @@ class Dealer(OwnedModel):
     )
     monthly_performance = models.JSONField(default=dict, blank=True)
     product_demand = models.JSONField(default=dict, blank=True)
+    # DEPRECATED - use annotated revenue_generated from DealerViewSet.
     revenue_generated = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    # DEPRECATED - use annotated active_leads_count from DealerViewSet.
     active_leads_count = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True)
     approved_at = models.DateTimeField(null=True, blank=True)
