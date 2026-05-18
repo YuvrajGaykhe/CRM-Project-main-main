@@ -1,6 +1,7 @@
 import csv
 import io
 
+from django.db import DataError, IntegrityError
 from django.db.models import Count
 from django.http import StreamingHttpResponse
 from rest_framework import decorators, filters, response, status, viewsets
@@ -236,43 +237,85 @@ class LeadViewSet(viewsets.ModelViewSet):
 
         decoded = csv_file.read().decode("utf-8-sig")
         reader = csv.DictReader(io.StringIO(decoded))
-        created_count = 0
+        imported_count = 0
         errors = []
+        allowed_lead_sources = {choice for choice, _ in Lead.SOURCE_CHOICES}
+        allowed_inquiry_types = {choice for choice, _ in Lead.INQUIRY_TYPE_CHOICES}
+
+        def normalize_mobile_number(value):
+            # Normalize whitespace/casing for duplicate detection.
+            return "".join((value or "").strip().lower().split())
+
+        existing_mobile_numbers = {
+            normalized
+            for mobile in Lead.objects.values_list("mobile_number", flat=True)
+            if (normalized := normalize_mobile_number(mobile))
+        }
 
         for row_num, row in enumerate(reader, start=2):
+            mobile_number = row.get("mobile_number", "").strip()
+            normalized_mobile_number = normalize_mobile_number(mobile_number)
+
+            if not normalized_mobile_number:
+                errors.append({"row": row_num, "reason": "Missing mobile number"})
+                continue
+
+            if normalized_mobile_number in existing_mobile_numbers:
+                errors.append({"row": row_num, "reason": "Duplicate mobile number"})
+                continue
+
+            lead_source = (row.get("lead_source", "manual_entry") or "manual_entry").strip().lower()
+            if lead_source not in allowed_lead_sources:
+                errors.append(
+                    {
+                        "row": row_num,
+                        "reason": f"Invalid lead_source: '{lead_source}'",
+                    }
+                )
+                continue
+
+            inquiry_type = (row.get("inquiry_type", "product") or "product").strip().lower()
+            if inquiry_type not in allowed_inquiry_types:
+                errors.append(
+                    {
+                        "row": row_num,
+                        "reason": f"Invalid inquiry_type: '{inquiry_type}'",
+                    }
+                )
+                continue
+
             try:
                 lead = Lead.objects.create(
                     full_name=row.get("full_name", "").strip(),
-                    mobile_number=row.get("mobile_number", "").strip(),
+                    mobile_number=mobile_number,
                     whatsapp_number=row.get("whatsapp_number", "").strip(),
                     email=row.get("email", "").strip(),
                     company_name=row.get("company_name", "").strip(),
                     city=row.get("city", "").strip(),
                     state=row.get("state", "").strip(),
                     pincode=row.get("pincode", "").strip(),
-                    lead_source=row.get("lead_source", "manual_entry").strip() or "manual_entry",
-                    inquiry_type=row.get("inquiry_type", "product").strip() or "product",
+                    lead_source=lead_source,
+                    inquiry_type=inquiry_type,
                     priority_level=row.get("priority_level", "medium").strip() or "medium",
                     notes=row.get("notes", "").strip(),
                     created_by=request.user,
                     updated_by=request.user,
                 )
                 create_timeline_event(lead, "lead.csv_imported", "Lead imported via CSV upload.", user=request.user)
-                created_count += 1
-            except Exception as exc:
-                errors.append({"row": row_num, "error": str(exc)})
-                if len(errors) >= 50:
-                    break
+                existing_mobile_numbers.add(normalized_mobile_number)
+                imported_count += 1
+            except (IntegrityError, DataError, ValueError, TypeError) as exc:
+                errors.append({"row": row_num, "reason": str(exc)})
 
         log_action(
             request.user,
             "lead.csv_imported",
-            metadata={"created": created_count, "errors": len(errors)},
+            metadata={"imported": imported_count, "skipped": len(errors), "errors": len(errors)},
             request=request,
         )
 
         return response.Response(
-            {"created": created_count, "errors": errors},
+            {"imported": imported_count, "skipped": len(errors), "errors": errors},
             status=status.HTTP_201_CREATED,
         )
 
