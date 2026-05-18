@@ -69,6 +69,9 @@ class LeadViewSet(viewsets.ModelViewSet):
             "assigned_executive",
             "assigned_dealer",
         )
+        if self.action == "retrieve":
+            queryset = queryset.prefetch_related("followups", "lead_notes", "timeline")
+
         status_filter = self.request.query_params.get("status")
         state = self.request.query_params.get("state")
         source = self.request.query_params.get("source")
