@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiCheckCircle, FiMapPin, FiPlus, FiSave, FiSearch, FiShield, FiTrendingUp } from "react-icons/fi";
 
@@ -51,19 +51,25 @@ const DealersPage = () => {
   });
   const usersQuery = useQuery({ queryKey: ["users", "dealer-form"], queryFn: () => getEnterpriseUsers({ page_size: 100 }) });
 
-  const dealers = dealersQuery.data?.results || dealersQuery.data || [];
-  const users = usersQuery.data?.results || usersQuery.data || [];
+  const dealersData = dealersQuery.data;
+  const usersData = usersQuery.data;
+  const dealers = dealersData?.results || dealersData || [];
+  const users = usersData?.results || usersData || [];
 
   const regionStats = useMemo(
-    () =>
+    () => {
+      const currentDealers = dealersData?.results || dealersData || [];
+      return (
       ["North", "West", "South", "East", "Central"].map((region) => ({
         region,
-        count: dealers.filter((dealer) => dealer.region === region).length,
-        revenue: dealers
+        count: currentDealers.filter((dealer) => dealer.region === region).length,
+        revenue: currentDealers
           .filter((dealer) => dealer.region === region)
           .reduce((sum, dealer) => sum + Number(dealer.revenue_generated || 0), 0),
-      })),
-    [dealers]
+      }))
+      );
+    },
+    [dealersData]
   );
 
   const createMutation = useMutation({

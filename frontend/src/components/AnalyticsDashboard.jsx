@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Area, AreaChart, Bar, BarChart, CartesianGrid, Cell,
-  Line, LineChart, Pie, PieChart, RadialBar, RadialBarChart,
+  Pie, PieChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import {
@@ -10,7 +10,7 @@ import {
   FiMap, FiTarget, FiTrendingUp, FiUsers, FiZap,
 } from "react-icons/fi";
 import { getLeadAnalytics, getDealerAnalytics, getProductAnalytics, getEmployeeAnalytics, getActivityFeed } from "../services/api/crm";
-import StatusBadge, { pretty } from "./ui/StatusBadge";
+import { pretty } from "./ui/StatusBadge";
 
 const RANGES = [
   { label: "7 days", value: "7d" },
@@ -72,32 +72,31 @@ const AnalyticsDashboard = () => {
   const employeeQ = useQuery({ queryKey: ["analytics-employees", params], queryFn: () => getEmployeeAnalytics(params), staleTime: 300_000 });
   const activityQ = useQuery({ queryKey: ["analytics-activity"], queryFn: () => getActivityFeed({ limit: 30 }), staleTime: 300_000 });
 
-  const funnel = leadQ.data?.funnel?.funnel || [];
+  const funnel = leadQ.data?.funnel?.funnel;
   const funnelKpis = leadQ.data?.funnel || {};
   const dailyTrends = leadQ.data?.trends?.daily || [];
-  const sourceBreakdown = leadQ.data?.trends?.source_breakdown || [];
-  const statusBreakdown = leadQ.data?.trends?.status_breakdown || [];
+  const sourceBreakdown = leadQ.data?.trends?.source_breakdown;
 
-  const dealerData = dealerQ.data || {};
-  const products = productQ.data?.products || [];
+  const dealerData = dealerQ.data;
+  const products = productQ.data?.products;
   const employees = employeeQ.data || [];
   const activity = activityQ.data || [];
 
   const funnelChart = useMemo(() =>
-    funnel.filter(s => !["lost","closed"].includes(s.stage)).map(s => ({
+    (funnel ?? []).filter(s => !["lost", "closed"].includes(s.stage)).map(s => ({
       stage: pretty(s.stage), count: s.count, pct: s.percentage,
     })), [funnel]);
 
   const sourceChart = useMemo(() =>
-    sourceBreakdown.map(s => ({ name: pretty(s.lead_source), value: s.count })), [sourceBreakdown]);
+    (sourceBreakdown ?? []).map(s => ({ name: pretty(s.lead_source), value: s.count })), [sourceBreakdown]);
 
   const regionChart = useMemo(() =>
-    (dealerData.regional_revenue || []).map(r => ({
+    (dealerData?.regional_revenue ?? []).map(r => ({
       region: r.region, revenue: Number(r.total_revenue || 0), dealers: r.count,
     })), [dealerData]);
 
   const productChart = useMemo(() =>
-    products.map(p => ({ sku: p.sku, demand: p.demand_score, inquiries: p.period_inquiries })), [products]);
+    (products ?? []).map(p => ({ sku: p.sku, demand: p.demand_score, inquiries: p.period_inquiries })), [products]);
 
   return (
     <div className="space-y-6 animate-fade-in">

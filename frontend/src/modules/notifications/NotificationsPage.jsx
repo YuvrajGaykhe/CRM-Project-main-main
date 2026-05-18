@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiBell, FiCheckCircle, FiFilter } from "react-icons/fi";
 
@@ -16,8 +16,12 @@ const NotificationsPage = () => {
     queryFn: () => getNotifications({ page_size: 100, unread: filter === "unread" ? "true" : undefined }),
   });
 
-  const notifications = notificationsQuery.data?.results || notificationsQuery.data || [];
-  const unreadCount = useMemo(() => notifications.filter((notification) => !notification.read_at).length, [notifications]);
+  const notificationsData = notificationsQuery.data;
+  const notifications = notificationsData?.results || notificationsData || [];
+  const unreadCount = useMemo(() => {
+    const currentNotifications = notificationsData?.results || notificationsData || [];
+    return currentNotifications.filter((notification) => !notification.read_at).length;
+  }, [notificationsData]);
 
   const readMutation = useMutation({
     mutationFn: markNotificationRead,

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FiActivity, FiBarChart2, FiBell, FiBox, FiLogOut,
@@ -164,7 +164,7 @@ const DashboardShell = ({ children }) => {
                 {searchOpen && searchResults && (
                   <div className="absolute right-0 top-full mt-2 w-96 rounded-xl border border-[var(--sigma-border)] bg-[var(--sigma-surface)] shadow-2xl shadow-black/50">
                     <div className="px-4 py-3 text-xs text-slate-400">
-                      {searchResults.results.length} results for "{searchResults.query}"
+                      {searchResults.results.length} results for &quot;{searchResults.query}&quot;
                     </div>
                     <div className="max-h-80 overflow-y-auto divide-y divide-white/5">
                       {searchResults.results.length ? searchResults.results.map((result, i) => (

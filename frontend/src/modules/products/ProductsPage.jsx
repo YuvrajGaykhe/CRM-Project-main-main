@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { FiBarChart2, FiDownload, FiPlus, FiSave, FiSliders, FiZap } from "react-icons/fi";
@@ -33,10 +33,14 @@ const ProductsPage = () => {
     staleTime: 30_000,
   });
 
-  const products = productsQuery.data?.results || productsQuery.data || [];
+  const productsData = productsQuery.data;
+  const products = productsData?.results || productsData || [];
   const demandData = useMemo(
-    () => products.map((product) => ({ sku: product.sku, demand: product.demand_score, inquiries: product.inquiry_count || 0 })),
-    [products]
+    () => {
+      const currentProducts = productsData?.results || productsData || [];
+      return currentProducts.map((product) => ({ sku: product.sku, demand: product.demand_score, inquiries: product.inquiry_count || 0 }));
+    },
+    [productsData]
   );
 
   const createMutation = useMutation({

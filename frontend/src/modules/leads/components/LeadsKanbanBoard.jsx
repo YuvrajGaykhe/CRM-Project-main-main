@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { AnimatePresence, motion } from "framer-motion";
 import { FiClock } from "react-icons/fi";
 import StatusBadge, { pretty } from "../../../components/ui/StatusBadge";

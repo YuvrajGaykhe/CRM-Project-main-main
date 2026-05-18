@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

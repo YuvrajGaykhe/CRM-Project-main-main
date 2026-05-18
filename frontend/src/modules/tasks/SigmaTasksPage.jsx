@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FiCalendar, FiCheckCircle, FiClock, FiPlus, FiSave, FiUser } from "react-icons/fi";
+import { FiCalendar, FiCheckCircle, FiClock, FiPlus, FiSave } from "react-icons/fi";
 
 import EmptyState from "../../components/ui/EmptyState";
 import { ActionButton, Field, Input, Select, Textarea } from "../../components/ui/SigmaForm";
@@ -62,19 +62,29 @@ const SigmaTasksPage = () => {
   const dealersQuery = useQuery({ queryKey: ["dealers", "task-form"], queryFn: () => getDealers({ page_size: 100 }) });
   const usersQuery = useQuery({ queryKey: ["users", "task-form"], queryFn: () => getEnterpriseUsers({ page_size: 100 }) });
 
-  const tasks = tasksQuery.data?.results || tasksQuery.data || [];
-  const followups = followupsQuery.data?.results || followupsQuery.data || [];
-  const leads = leadsQuery.data?.results || leadsQuery.data || [];
-  const dealers = dealersQuery.data?.results || dealersQuery.data || [];
-  const users = usersQuery.data?.results || usersQuery.data || [];
+  const tasksData = tasksQuery.data;
+  const followupsData = followupsQuery.data;
+  const leadsData = leadsQuery.data;
+  const dealersData = dealersQuery.data;
+  const usersData = usersQuery.data;
+
+  const tasks = tasksData?.results || tasksData || [];
+  const followups = followupsData?.results || followupsData || [];
+  const leads = leadsData?.results || leadsData || [];
+  const dealers = dealersData?.results || dealersData || [];
+  const users = usersData?.results || usersData || [];
 
   const stats = useMemo(
-    () => ({
-      open: tasks.filter((task) => !["done", "cancelled"].includes(task.status)).length,
-      followups: followups.filter((followup) => followup.status === "scheduled").length,
-      overdue: followups.filter((followup) => followup.status === "scheduled" && new Date(followup.scheduled_at) < new Date()).length,
-    }),
-    [tasks, followups]
+    () => {
+      const currentTasks = tasksData?.results || tasksData || [];
+      const currentFollowups = followupsData?.results || followupsData || [];
+      return {
+        open: currentTasks.filter((task) => !["done", "cancelled"].includes(task.status)).length,
+        followups: currentFollowups.filter((followup) => followup.status === "scheduled").length,
+        overdue: currentFollowups.filter((followup) => followup.status === "scheduled" && new Date(followup.scheduled_at) < new Date()).length,
+      };
+    },
+    [tasksData, followupsData]
   );
 
   const createTaskMutation = useMutation({

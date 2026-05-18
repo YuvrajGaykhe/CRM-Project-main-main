@@ -1,7 +1,7 @@
 // frontend/src/components/EditRecord.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const EditRecord = () => {

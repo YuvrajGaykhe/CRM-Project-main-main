@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FiClock, FiFilter, FiSearch, FiShield } from "react-icons/fi";
+import { FiClock, FiSearch } from "react-icons/fi";
 import { ActionButton, Select } from "../../components/ui/SigmaForm";
-import StatusBadge, { pretty } from "../../components/ui/StatusBadge";
+import { pretty } from "../../components/ui/StatusBadge";
 import { getAuditLogs } from "../../services/api/crm";
 
 const ENTITY_TYPES = [
