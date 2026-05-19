@@ -10,6 +10,7 @@ import {
   FiMap, FiTarget, FiTrendingUp, FiUsers, FiZap,
 } from "react-icons/fi";
 import { getLeadAnalytics, getDealerAnalytics, getProductAnalytics, getEmployeeAnalytics, getActivityFeed } from "../services/api/crm";
+import Breadcrumb from "./Breadcrumb";
 import { pretty } from "./ui/StatusBadge";
 
 const RANGES = [
@@ -100,6 +101,8 @@ const AnalyticsDashboard = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <Breadcrumb items={[{ label: "Analytics" }]} showBackButton={false} />
+      
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>

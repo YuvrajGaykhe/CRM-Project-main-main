@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FiClock, FiSearch } from "react-icons/fi";
 import { ActionButton, Select } from "../../components/ui/SigmaForm";
+import Breadcrumb from "../../components/Breadcrumb";
 import { pretty } from "../../components/ui/StatusBadge";
 import { getAuditLogs } from "../../services/api/crm";
 
@@ -31,6 +32,8 @@ const AuditLogPage = () => {
 
   return (
     <div className="space-y-5 animate-fade-in">
+      <Breadcrumb items={[{ label: "Audit Log" }]} showBackButton={false} />
+      
       <div>
         <p className="text-xs uppercase text-red-300">Security & Compliance</p>
         <h1 className="mt-2 text-3xl font-semibold text-white">Audit Trail</h1>

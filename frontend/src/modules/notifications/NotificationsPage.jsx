@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiBell, FiCheckCircle, FiFilter } from "react-icons/fi";
 
 import EmptyState from "../../components/ui/EmptyState";
+import Breadcrumb from "../../components/Breadcrumb";
 import { ActionButton, Select } from "../../components/ui/SigmaForm";
 import StatusBadge, { pretty } from "../../components/ui/StatusBadge";
 import { getNotifications, markNotificationRead } from "../../services/api/crm";
@@ -30,6 +31,8 @@ const NotificationsPage = () => {
 
   return (
     <div className="space-y-5">
+      <Breadcrumb items={[{ label: "Notifications" }]} showBackButton={false} />
+      
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-xs uppercase text-red-300">Operational Alerts</p>

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiColumns, FiList, FiRefreshCw, FiSearch, FiX } from "react-icons/fi";
 import { ActionButton, Select } from "../../../components/ui/SigmaForm";
+import Breadcrumb from "../../../components/Breadcrumb";
 import useLeadsFiltersSync from "../hooks/useLeadsFiltersSync";
 import useLeadsFiltersStore from "../store/leadsFiltersStore";
 import LeadsKanbanBoard from "./LeadsKanbanBoard";
@@ -278,6 +279,8 @@ const LeadsWorkspace = ({ mode }) => {
 
   return (
     <div className="space-y-5">
+      <Breadcrumb items={[{ label: "Leads" }]} showBackButton={false} />
+      
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-xs uppercase text-red-300">Lead Intelligence</p>

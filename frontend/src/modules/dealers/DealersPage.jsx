@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FiCheckCircle, FiMapPin, FiPlus, FiSave, FiSearch, FiShield, FiTrendingUp } from "react-icons/fi";
 
 import EmptyState from "../../components/ui/EmptyState";
+import Breadcrumb from "../../components/Breadcrumb";
 import { ActionButton, Field, Input, Select, Textarea } from "../../components/ui/SigmaForm";
 import SigmaModal from "../../components/ui/SigmaModal";
 import StatusBadge, { pretty } from "../../components/ui/StatusBadge";
@@ -107,6 +108,8 @@ const DealersPage = () => {
 
   return (
     <div className="space-y-5">
+      <Breadcrumb items={[{ label: "Dealers" }]} showBackButton={false} />
+      
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-xs uppercase text-red-300">Dealer Ecosystem</p>

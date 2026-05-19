@@ -4,6 +4,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { FiBarChart2, FiDownload, FiPlus, FiSave, FiSliders, FiZap } from "react-icons/fi";
 
 import EmptyState from "../../components/ui/EmptyState";
+import Breadcrumb from "../../components/Breadcrumb";
 import { ActionButton, Field, Input, Select, Textarea } from "../../components/ui/SigmaForm";
 import SigmaModal from "../../components/ui/SigmaModal";
 import { createProduct, getProducts, updateProduct } from "../../services/api/crm";
@@ -69,6 +70,8 @@ const ProductsPage = () => {
 
   return (
     <div className="space-y-5">
+      <Breadcrumb items={[{ label: "Products" }]} showBackButton={false} />
+      
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="text-xs uppercase text-red-300">Product Performance</p>

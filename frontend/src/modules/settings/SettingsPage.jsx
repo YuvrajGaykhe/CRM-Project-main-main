@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { FiLock, FiMail, FiShield, FiUser } from "react-icons/fi";
 import AuthContext from "../../context/AuthContext";
+import Breadcrumb from "../../components/Breadcrumb";
 
 const InfoRow = ({ label, value, icon: Icon }) => (
   <div className="flex items-center gap-4 rounded-lg bg-white/5 px-4 py-3">
@@ -17,6 +18,8 @@ const SettingsPage = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <Breadcrumb items={[{ label: "Settings" }]} showBackButton={false} />
+      
       <div>
         <p className="text-xs uppercase text-red-300">Account</p>
         <h1 className="mt-2 text-3xl font-semibold text-white">Settings</h1>

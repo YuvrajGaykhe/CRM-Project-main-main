@@ -8,6 +8,7 @@ import {
   FiActivity, FiClock, FiMap, FiTarget, FiTrendingUp, FiUsers, FiZap,
 } from "react-icons/fi";
 import { getEnterpriseAnalytics } from "../services/api/crm";
+import NavigationCards from "./NavigationCards";
 
 const statusLabels = {
   new: "New", attempted_contact: "Attempted", contacted: "Contacted",
@@ -49,6 +50,9 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Navigation Cards */}
+      <NavigationCards />
+
       {/* Hero */}
       <section className="grid gap-4 lg:grid-cols-[1.4fr_0.6fr]">
         <div className="rounded-xl border border-[var(--sigma-border)] bg-[var(--sigma-surface)]/80 p-6 shadow-2xl shadow-black/20">
