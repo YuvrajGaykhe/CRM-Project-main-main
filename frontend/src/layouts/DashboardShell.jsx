@@ -1,33 +1,23 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  FiActivity, FiBarChart2, FiBell, FiBox, FiLogOut, FiCheckSquare,
-  FiMap, FiHome, FiSearch, FiSettings, FiShield, FiX,
+  FiActivity, FiBell, FiLogOut,
+  FiHome, FiSearch, FiX,
 } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 import AuthContext from "../context/AuthContext";
 import useUiStore from "../app/store/uiStore";
 import { getUnreadNotificationCount, globalSearch } from "../services/api/crm";
-
-const ROLE_ACCESS_MAP = {
-  "super-admin": ["leads", "dealers", "products", "tasks", "analytics", "notifications", "audit", "settings"],
-  "admin": ["leads", "dealers", "products", "tasks", "analytics", "notifications", "audit", "settings"],
-  "sales-manager": ["leads", "dealers", "tasks", "analytics", "notifications", "audit", "settings"],
-  "dealer-manager": ["leads", "dealers", "tasks", "notifications", "settings"],
-  "sales-executive": ["leads", "tasks", "notifications", "settings"],
-  "support-staff": ["leads", "notifications", "settings"],
-};
+import { MODULES, ROLE_ACCESS } from "@shared/constants";
 
 const navItems = [
   { label: "Overview", to: "/dashboard", icon: FiHome },
-  { label: "Leads", to: "/dashboard/leads", icon: FiActivity, moduleId: "leads" },
-  { label: "Dealers", to: "/dashboard/dealers", icon: FiMap, moduleId: "dealers" },
-  { label: "Products", to: "/dashboard/products", icon: FiBox, moduleId: "products" },
-  { label: "Tasks", to: "/dashboard/tasks", icon: FiCheckSquare, moduleId: "tasks" },
-  { label: "Analytics", to: "/dashboard/analytics", icon: FiBarChart2, moduleId: "analytics" },
-  { label: "Notifications", to: "/dashboard/notifications", icon: FiBell, moduleId: "notifications" },
-  { label: "Audit Log", to: "/dashboard/audit", icon: FiShield, moduleId: "audit" },
-  { label: "Settings", to: "/dashboard/settings", icon: FiSettings, moduleId: "settings" },
+  ...MODULES.map((module) => ({
+    label: module.label,
+    to: module.path,
+    icon: module.icon,
+    moduleId: module.id,
+  })),
 ];
 
 const DashboardShell = ({ children }) => {
@@ -36,7 +26,7 @@ const DashboardShell = ({ children }) => {
   const navigate = useNavigate();
 
   const userRole = user?.role || "support-staff";
-  const accessibleModules = ROLE_ACCESS_MAP[userRole] || [];
+  const accessibleModules = ROLE_ACCESS[userRole] || [];
 
   const visibleNavItems = navItems.filter((item) => !item.moduleId || accessibleModules.includes(item.moduleId));
 

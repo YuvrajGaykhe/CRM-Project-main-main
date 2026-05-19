@@ -1,85 +1,18 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FiUsers, FiMap, FiBox, FiCheckSquare, FiBell, FiShield, FiSettings, FiBarChart2,
-} from "react-icons/fi";
 import AuthContext from "../context/AuthContext";
+import { MODULES, ROLE_ACCESS } from "@shared/constants";
 
-const ROLE_ACCESS = {
-  "super-admin": ["leads", "dealers", "products", "tasks", "analytics", "notifications", "audit", "settings"],
-  "admin": ["leads", "dealers", "products", "tasks", "analytics", "notifications", "audit", "settings"],
-  "sales-manager": ["leads", "dealers", "tasks", "analytics", "notifications", "audit", "settings"],
-  "dealer-manager": ["leads", "dealers", "tasks", "notifications", "settings"],
-  "sales-executive": ["leads", "tasks", "notifications", "settings"],
-  "support-staff": ["leads", "notifications", "settings"],
+const COLOR_MAP = {
+  leads: "from-red-500 to-orange-400",
+  dealers: "from-sky-500 to-cyan-400",
+  products: "from-amber-500 to-yellow-400",
+  tasks: "from-violet-500 to-purple-400",
+  analytics: "from-emerald-500 to-teal-400",
+  notifications: "from-pink-500 to-rose-400",
+  audit: "from-slate-500 to-gray-400",
+  settings: "from-zinc-500 to-slate-400",
 };
-
-const NAV_CARDS = [
-  {
-    id: "leads",
-    title: "Leads",
-    description: "Manage and track all customer leads",
-    icon: FiUsers,
-    path: "/dashboard/leads",
-    color: "from-red-500 to-orange-400",
-  },
-  {
-    id: "dealers",
-    title: "Dealers",
-    description: "Dealer network and territory management",
-    icon: FiMap,
-    path: "/dashboard/dealers",
-    color: "from-sky-500 to-cyan-400",
-  },
-  {
-    id: "products",
-    title: "Products",
-    description: "Product catalogue and demand tracking",
-    icon: FiBox,
-    path: "/dashboard/products",
-    color: "from-amber-500 to-yellow-400",
-  },
-  {
-    id: "tasks",
-    title: "Tasks",
-    description: "Assigned tasks and follow-up actions",
-    icon: FiCheckSquare,
-    path: "/dashboard/tasks",
-    color: "from-violet-500 to-purple-400",
-  },
-  {
-    id: "analytics",
-    title: "Analytics",
-    description: "Real-time KPIs and performance metrics",
-    icon: FiBarChart2,
-    path: "/dashboard/analytics",
-    color: "from-emerald-500 to-teal-400",
-  },
-  {
-    id: "notifications",
-    title: "Notifications",
-    description: "Alerts and in-app notifications",
-    icon: FiBell,
-    path: "/dashboard/notifications",
-    color: "from-pink-500 to-rose-400",
-  },
-  {
-    id: "audit",
-    title: "Audit Log",
-    description: "Immutable system activity trail",
-    icon: FiShield,
-    path: "/dashboard/audit",
-    color: "from-slate-500 to-gray-400",
-  },
-  {
-    id: "settings",
-    title: "Settings",
-    description: "Account and system preferences",
-    icon: FiSettings,
-    path: "/dashboard/settings",
-    color: "from-zinc-500 to-slate-400",
-  },
-];
 
 const NavigationCards = () => {
   const { user } = useContext(AuthContext);
@@ -90,7 +23,7 @@ const NavigationCards = () => {
   const userRole = user.role || "support-staff";
   const accessibleModules = ROLE_ACCESS[userRole] || [];
 
-  const visibleCards = NAV_CARDS.filter((card) => accessibleModules.includes(card.id));
+  const visibleCards = MODULES.filter((card) => accessibleModules.includes(card.id));
 
   return (
     <div className="mt-8">
@@ -102,6 +35,7 @@ const NavigationCards = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {visibleCards.map((card) => {
           const Icon = card.icon;
+          const color = COLOR_MAP[card.id] || "from-slate-500 to-gray-400";
           return (
             <button
               key={card.id}
@@ -109,10 +43,10 @@ const NavigationCards = () => {
               onClick={() => navigate(card.path)}
               className="group rounded-xl border border-[var(--sigma-border)] bg-[var(--sigma-surface)]/80 p-5 text-left transition hover:border-red-400/50 hover:bg-[var(--sigma-surface)]"
             >
-              <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${card.color} text-white`}>
+              <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${color} text-white`}>
                 <Icon className="text-lg" />
               </div>
-              <h3 className="font-semibold text-white">{card.title}</h3>
+              <h3 className="font-semibold text-white">{card.label}</h3>
               <p className="mt-1 text-sm text-slate-400">{card.description}</p>
               <p className="mt-3 text-xs font-medium text-red-300 group-hover:text-red-200">Go to →</p>
             </button>
